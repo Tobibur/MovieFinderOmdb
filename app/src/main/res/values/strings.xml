@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Movie Finder Tmdb</string>
+    <string name="title_tag">Find your favorite movie</string>
+    <string name="the_walk">The Walk</string>
+    <string name="search">Search</string>
+    <string name="imdb">IMDB rating: </string>
+</resources>
