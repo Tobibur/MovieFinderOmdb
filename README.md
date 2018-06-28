@@ -9,3 +9,8 @@ Tutorial of this project is found in this blog:
 ## Screenshot
 
 <img src = "images/demo.jpg" width="300">
+
+
+## License & Copyright
+
+Licensed under the [MIT License](LICENSE).
