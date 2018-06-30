@@ -1,3 +1,5 @@
+<p align="center"><img src="logo/1024px.png" alt="MovieFinderOmdb" height="200px"></p>
+
 # MovieFinderOmdb
 Android App to find movie details and rating using [Omdb API](http://omdbapi.com/)
 
