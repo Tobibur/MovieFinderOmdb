@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +21,7 @@ import org.json.JSONObject;
 
 import static android.content.ContentValues.TAG;
 
-public class ResultActivity extends Activity {
+public class ResultActivity extends AppCompatActivity {
 
     String MovieName,URL="http://www.omdbapi.com/?t=The%20Walk&apikey=35ba1dc9";
     ProgressDialog progressDialog;
@@ -75,7 +76,7 @@ public class ResultActivity extends Activity {
                     String genre = jsonObject.getString("Genre");
                     String actor = jsonObject.getString("Actors");
                     String plot = jsonObject.getString("Plot");
-                    mImageLoader.get(img_url, ImageLoader.getImageListener(mNetworkImageView,R.drawable.movieslate,R.mipmap.ic_launcher_round));
+                    mImageLoader.get(img_url, ImageLoader.getImageListener(mNetworkImageView,R.mipmap.ic_launcher,R.mipmap.ic_launcher));
                     mNetworkImageView.setImageUrl(img_url, mImageLoader);
                     String titleYear=title+" ("+year+")";
                     String rated =getString(R.string.imdb)+rating;

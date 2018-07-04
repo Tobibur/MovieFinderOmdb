@@ -4,4 +4,5 @@
     <string name="the_walk">The Walk</string>
     <string name="search">Search</string>
     <string name="imdb">IMDB rating: </string>
+    <string name="movie_name">Movie Name</string>
 </resources>
