@@ -2,10 +2,16 @@ package com.example.tobibur.moviefinderomdb;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,27 +21,89 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
 public class ResultActivity extends AppCompatActivity {
 
-    String MovieName,URL="http://www.omdbapi.com/?t=The%20Walk&apikey=35ba1dc9";
+    String MovieName;
     ProgressDialog progressDialog;
     private NetworkImageView mNetworkImageView;
     private ImageLoader mImageLoader;
     TextView title_view,rate_view,release_view,run_view,genre_view,actor_view,plot_view;
+    Toolbar toolbar;
+    MaterialSearchView searchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         MovieName = getIntent().getStringExtra("movie");
         progressDialog = new ProgressDialog(ResultActivity.this);
-        mNetworkImageView = findViewById(R.id
-                .networkImageView);
+
+        initVariables();
+
+        setSupportActionBar(toolbar);
+
+        searchClicked();
+        BuildMovieUrl(MovieName);
+    }
+
+    private void searchClicked() {
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                BuildMovieUrl(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Do some magic
+                return false;
+            }
+        });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
+
+        searchView.setVoiceSearch(true); //or false
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String searchWrd = matches.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    searchView.setQuery(searchWrd, false);
+                }
+            }
+
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void initVariables() {
+        mNetworkImageView = findViewById(R.id.networkImageView);
         title_view = findViewById(R.id.title);
         rate_view = findViewById(R.id.rating);
         release_view = findViewById(R.id.released);
@@ -43,13 +111,19 @@ public class ResultActivity extends AppCompatActivity {
         genre_view = findViewById(R.id.genre);
         plot_view = findViewById(R.id.plot);
         actor_view = findViewById(R.id.actor);
+        toolbar = findViewById(R.id.toolbar);
+        searchView = findViewById(R.id.search_view);
+    }
+
+    private void BuildMovieUrl(String movieName) {
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("http")
                 .authority("www.omdbapi.com")
                 .appendPath("")
-                .appendQueryParameter("t", MovieName)
+                .appendQueryParameter("t", movieName)
                 .appendQueryParameter("apikey", "35ba1dc9");
         String myUrl = builder.build().toString();
+        Log.d(TAG, "BuildMovieUrl: "+myUrl);
         volleyStringRequst(myUrl);
     }
 
@@ -79,7 +153,7 @@ public class ResultActivity extends AppCompatActivity {
                     mImageLoader.get(img_url, ImageLoader.getImageListener(mNetworkImageView,R.mipmap.ic_launcher,R.mipmap.ic_launcher));
                     mNetworkImageView.setImageUrl(img_url, mImageLoader);
                     String titleYear=title+" ("+year+")";
-                    String rated =getString(R.string.imdb)+rating;
+                    String rated =getString(R.string.imdb)+" "+rating;
                     title_view.setText(titleYear);
                     rate_view.setText(rated);
                     release_view.setText("Released: "+released);
@@ -104,5 +178,35 @@ public class ResultActivity extends AppCompatActivity {
         });
         // Adding String request to request queue
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(strReq, REQUEST_TAG);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        MenuItem item = menu.findItem(R.id.search_menu_btn);
+        searchView.setMenuItem(item);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.search_menu_btn) {
+            searchDialog();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void searchDialog() {
+
     }
 }
