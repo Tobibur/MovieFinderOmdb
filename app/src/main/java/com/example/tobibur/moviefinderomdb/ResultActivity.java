@@ -1,6 +1,5 @@
 package com.example.tobibur.moviefinderomdb;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +11,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
+import com.jetradar.desertplaceholder.DesertPlaceholder;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONException;
@@ -39,20 +41,36 @@ public class ResultActivity extends AppCompatActivity {
     TextView title_view,rate_view,release_view,run_view,genre_view,actor_view,plot_view;
     Toolbar toolbar;
     MaterialSearchView searchView;
+    RelativeLayout mRelativeLayout;
+    TextView mNone;
+    DesertPlaceholder desertPlaceholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        MovieName = getIntent().getStringExtra("movie");
+        //MovieName = getIntent().getStringExtra("movie");
         progressDialog = new ProgressDialog(ResultActivity.this);
 
         initVariables();
 
         setSupportActionBar(toolbar);
 
+
+        //BuildMovieUrl(MovieName);
+        mRelativeLayout.setVisibility(View.GONE);
+
+        desertPlaceholder = (DesertPlaceholder) findViewById(R.id.placeholder);
+        desertPlaceholder.setVisibility(View.VISIBLE);
+        desertPlaceholder.setOnButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // do stuff
+            }
+        });
+        //findViewById(R.id.nested_linear).setBackground(getResources().getDrawable(R.drawable.movieslate));
+
         searchClicked();
-        BuildMovieUrl(MovieName);
     }
 
     private void searchClicked() {
@@ -61,6 +79,7 @@ public class ResultActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
                 BuildMovieUrl(query);
+
                 return false;
             }
 
@@ -113,6 +132,8 @@ public class ResultActivity extends AppCompatActivity {
         actor_view = findViewById(R.id.actor);
         toolbar = findViewById(R.id.toolbar);
         searchView = findViewById(R.id.search_view);
+        mRelativeLayout = findViewById(R.id.main_layout);
+        //mNone = findViewById(R.id.text_none);
     }
 
     private void BuildMovieUrl(String movieName) {
@@ -140,6 +161,9 @@ public class ResultActivity extends AppCompatActivity {
             public void onResponse(String response) {
                 Log.d(TAG, response);
                 try {
+                    mRelativeLayout.setVisibility(View.VISIBLE);
+                    desertPlaceholder.setVisibility(View.GONE);
+                    
                     JSONObject jsonObject = new JSONObject(response);
                     String img_url = jsonObject.getString("Poster");
                     String title = jsonObject.getString("Title");
@@ -150,7 +174,11 @@ public class ResultActivity extends AppCompatActivity {
                     String genre = jsonObject.getString("Genre");
                     String actor = jsonObject.getString("Actors");
                     String plot = jsonObject.getString("Plot");
-                    mImageLoader.get(img_url, ImageLoader.getImageListener(mNetworkImageView,R.mipmap.ic_launcher,R.mipmap.ic_launcher));
+                    
+                    mImageLoader.get(img_url,
+                            ImageLoader.getImageListener(mNetworkImageView,
+                                    R.mipmap.ic_launcher,
+                                    R.mipmap.ic_launcher));
                     mNetworkImageView.setImageUrl(img_url, mImageLoader);
                     String titleYear=title+" ("+year+")";
                     String rated =getString(R.string.imdb)+" "+rating;
@@ -163,7 +191,10 @@ public class ResultActivity extends AppCompatActivity {
                     plot_view.setText("Plot: "+plot);
 
                 } catch (JSONException e) {
+                    mRelativeLayout.setVisibility(View.GONE);
+                    desertPlaceholder.setVisibility(View.VISIBLE);
                     Toast.makeText(ResultActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onResponse: JsonException triggered");
                 }
 
                 progressDialog.hide();
