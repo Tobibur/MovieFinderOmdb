@@ -10,7 +10,7 @@ Tutorial of this project is found in this blog:
 
 ## Screenshot
 
-<img src = "images/demo.jpg" width="300">
+<img src = "images/1.png" width="300"> <img src = "images/2.png" width="300">
 
 
 ## License & Copyright
