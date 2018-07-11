@@ -30,37 +30,39 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static android.content.ContentValues.TAG;
 
 public class ResultActivity extends AppCompatActivity {
 
-    String MovieName;
     ProgressDialog progressDialog;
-    private NetworkImageView mNetworkImageView;
     private ImageLoader mImageLoader;
-    TextView title_view,rate_view,release_view,run_view,genre_view,actor_view,plot_view;
-    Toolbar toolbar;
-    MaterialSearchView searchView;
-    RelativeLayout mRelativeLayout;
-    TextView mNone;
-    DesertPlaceholder desertPlaceholder;
+    @BindView(R.id.networkImageView) NetworkImageView mNetworkImageView;
+    @BindView(R.id.title) TextView title_view;
+    @BindView(R.id.rating) TextView rate_view;
+    @BindView(R.id.released) TextView release_view;
+    @BindView(R.id.runtime) TextView run_view;
+    @BindView(R.id.genre) TextView genre_view;
+    @BindView(R.id.actor) TextView actor_view;
+    @BindView(R.id.plot) TextView plot_view;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.search_view) MaterialSearchView searchView;
+    @BindView(R.id.main_layout) RelativeLayout mRelativeLayout;
+    @BindView(R.id.placeholder) DesertPlaceholder desertPlaceholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
-        //MovieName = getIntent().getStringExtra("movie");
-        progressDialog = new ProgressDialog(ResultActivity.this);
+        ButterKnife.bind(this);
 
-        initVariables();
+        progressDialog = new ProgressDialog(ResultActivity.this);
 
         setSupportActionBar(toolbar);
 
-
-        //BuildMovieUrl(MovieName);
         mRelativeLayout.setVisibility(View.GONE);
-
-        desertPlaceholder = (DesertPlaceholder) findViewById(R.id.placeholder);
         desertPlaceholder.setVisibility(View.VISIBLE);
         desertPlaceholder.setOnButtonClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +71,6 @@ public class ResultActivity extends AppCompatActivity {
                 searchClicked();
             }
         });
-        //findViewById(R.id.nested_linear).setBackground(getResources().getDrawable(R.drawable.movieslate));
 
         searchClicked();
     }
@@ -122,20 +123,7 @@ public class ResultActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void initVariables() {
-        mNetworkImageView = findViewById(R.id.networkImageView);
-        title_view = findViewById(R.id.title);
-        rate_view = findViewById(R.id.rating);
-        release_view = findViewById(R.id.released);
-        run_view = findViewById(R.id.runtime);
-        genre_view = findViewById(R.id.genre);
-        plot_view = findViewById(R.id.plot);
-        actor_view = findViewById(R.id.actor);
-        toolbar = findViewById(R.id.toolbar);
-        searchView = findViewById(R.id.search_view);
-        mRelativeLayout = findViewById(R.id.main_layout);
-        //mNone = findViewById(R.id.text_none);
-    }
+
 
     private void BuildMovieUrl(String movieName) {
         Uri.Builder builder = new Uri.Builder();
