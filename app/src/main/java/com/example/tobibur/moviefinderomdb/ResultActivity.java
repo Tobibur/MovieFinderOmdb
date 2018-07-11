@@ -66,6 +66,7 @@ public class ResultActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // do stuff
+                searchClicked();
             }
         });
         //findViewById(R.id.nested_linear).setBackground(getResources().getDrawable(R.drawable.movieslate));

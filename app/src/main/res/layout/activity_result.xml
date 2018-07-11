@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             app:dp_buttonText="retry"
             android:visibility="visible"
-            app:dp_message="Use this nice placeholder if you have nothing to show"/>
+            app:dp_message="No Movies found! Search to find one..."/>
 
     <ScrollView
         android:layout_width="match_parent"
