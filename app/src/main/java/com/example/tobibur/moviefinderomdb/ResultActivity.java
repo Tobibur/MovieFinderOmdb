@@ -134,10 +134,10 @@ public class ResultActivity extends AppCompatActivity {
                 .appendQueryParameter("apikey", "35ba1dc9");
         String myUrl = builder.build().toString();
         Log.d(TAG, "BuildMovieUrl: "+myUrl);
-        volleyStringRequst(myUrl);
+        volleyStringRequest(myUrl);
     }
 
-    public void volleyStringRequst(String url){
+    public void volleyStringRequest(String url){
 
         String  REQUEST_TAG = "com.example.tobibur.moviefinderomdb";
         progressDialog.setMessage("Loading...");
