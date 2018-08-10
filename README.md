@@ -3,8 +3,6 @@
 # MovieFinderOmdb
 Android App to search movie details and rating quickly using [Omdb API](http://omdbapi.com/)
 
-## Download the apk: [Click here](http://festyy.com/wKs8us)
-
 ## Tutorial
 
 Tutorial of this project is found in this blog: 
