@@ -1,4 +1,4 @@
-package com.example.tobibur.moviefinderomdb;
+package com.example.tobibur.moviefinderomdb.view;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.example.tobibur.moviefinderomdb.R;
 import com.example.tobibur.moviefinderomdb.model.ApiResponse;
 import com.example.tobibur.moviefinderomdb.model.Movie;
 import com.example.tobibur.moviefinderomdb.viewmodel.ResultViewModel;
@@ -157,84 +158,6 @@ public class ResultActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
-
-
-
-//    private void BuildMovieUrl(String movieName) {
-//        Uri.Builder builder = new Uri.Builder();
-//        builder.scheme("http")
-//                .authority("www.omdbapi.com")
-//                .appendPath("")
-//                .appendQueryParameter("t", movieName)
-//                .appendQueryParameter("apikey", "35ba1dc9");
-//        String myUrl = builder.build().toString();
-//        Log.d(TAG, "BuildMovieUrl: "+myUrl);
-//        volleyStringRequest(myUrl);
-//    }
-//
-//    public void volleyStringRequest(String url){
-//
-//        String  REQUEST_TAG = "com.example.tobibur.moviefinderomdb";
-//        progressDialog.setMessage("Loading...");
-//        progressDialog.show();
-//        // Instantiate the RequestQueue.
-//        mImageLoader = AppSingleton.getInstance(this.getApplicationContext())
-//                .getImageLoader();
-//        StringRequest strReq = new StringRequest(url, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                Log.d(TAG, response);
-//                try {
-//                    mRelativeLayout.setVisibility(View.VISIBLE);
-//                    desertPlaceholder.setVisibility(View.GONE);
-//
-//                    JSONObject jsonObject = new JSONObject(response);
-//                    String img_url = jsonObject.getString("Poster");
-//                    String title = jsonObject.getString("Title");
-//                    String year = jsonObject.getString("Year");
-//                    String rating = jsonObject.getString("imdbRating");
-//                    String released = jsonObject.getString("Released");
-//                    String runtime = jsonObject.getString("Runtime");
-//                    String genre = jsonObject.getString("Genre");
-//                    String actor = jsonObject.getString("Actors");
-//                    String plot = jsonObject.getString("Plot");
-//
-//                    mImageLoader.get(img_url,
-//                            ImageLoader.getImageListener(mNetworkImageView,
-//                                    R.mipmap.ic_launcher,
-//                                    R.mipmap.ic_launcher));
-//                    mNetworkImageView.setImageUrl(img_url, mImageLoader);
-//                    String titleYear=title+" ("+year+")";
-//                    String rated =getString(R.string.imdb)+" "+rating;
-//                    title_view.setText(titleYear);
-//                    rate_view.setText(rated);
-//                    release_view.setText("Released: "+released);
-//                    run_view.setText("Runtime: "+runtime);
-//                    genre_view.setText("Genre: "+genre);
-//                    actor_view.setText("Actors: "+actor);
-//                    plot_view.setText("Plot: "+plot);
-//
-//                } catch (JSONException e) {
-//                    mRelativeLayout.setVisibility(View.GONE);
-//                    desertPlaceholder.setVisibility(View.VISIBLE);
-//                    Toast.makeText(ResultActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    Log.d(TAG, "onResponse: JsonException triggered");
-//                }
-//
-//                progressDialog.hide();
-//            }
-//        }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                VolleyLog.d(TAG, "Error: " + error.getMessage());
-//                progressDialog.hide();
-//            }
-//        });
-//        // Adding String request to request queue
-//        AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(strReq, REQUEST_TAG);
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
