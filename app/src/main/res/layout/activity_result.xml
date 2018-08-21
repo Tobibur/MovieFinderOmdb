@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:dp_buttonText="retry"
-            android:visibility="visible"
+            android:visibility="gone"
             app:dp_message="No Movies found! Search to find one..."/>
 
     <ScrollView
@@ -62,7 +62,7 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <com.android.volley.toolbox.NetworkImageView
+                    <ImageView
                         android:id="@+id/networkImageView"
                         android:layout_width="250dp"
                         android:layout_height="250dp"
