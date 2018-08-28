@@ -3,6 +3,10 @@
 # MovieFinderOmdb
 Android App to search movie details and rating quickly using [Omdb API](http://omdbapi.com/)
 
+**Note :** The project consist of two branches one uses Volley library for network call and the other uses Retrofit.
+* [Branch 1(master)](https://github.com/Tobibur/MovieFinderOmdb)
+* [Branch 2(usingretrofit)](https://github.com/Tobibur/MovieFinderOmdb/tree/usingretrofit)
+
 ## Tutorial
 
 Tutorial of this project is found in this blog: 
