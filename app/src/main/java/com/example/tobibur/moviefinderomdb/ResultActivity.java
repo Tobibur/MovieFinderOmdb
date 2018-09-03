@@ -1,5 +1,6 @@
 package com.example.tobibur.moviefinderomdb;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,24 +12,22 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
-import com.jetradar.desertplaceholder.DesertPlaceholder;
+import com.bumptech.glide.Glide;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,8 +37,9 @@ import static android.content.ContentValues.TAG;
 public class ResultActivity extends AppCompatActivity {
 
     ProgressDialog progressDialog;
-    private ImageLoader mImageLoader;
-    @BindView(R.id.networkImageView) NetworkImageView mNetworkImageView;
+
+    @BindView(R.id.networkImageView)
+    ImageView mNetworkImageView;
     @BindView(R.id.title) TextView title_view;
     @BindView(R.id.rating) TextView rate_view;
     @BindView(R.id.released) TextView release_view;
@@ -49,8 +49,8 @@ public class ResultActivity extends AppCompatActivity {
     @BindView(R.id.plot) TextView plot_view;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.search_view) MaterialSearchView searchView;
-    @BindView(R.id.main_layout) RelativeLayout mRelativeLayout;
-    @BindView(R.id.placeholder) DesertPlaceholder desertPlaceholder;
+
+    SessionManager mSessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,19 +58,16 @@ public class ResultActivity extends AppCompatActivity {
         setContentView(R.layout.activity_result);
         ButterKnife.bind(this);
 
-        progressDialog = new ProgressDialog(ResultActivity.this);
-
         setSupportActionBar(toolbar);
 
-        mRelativeLayout.setVisibility(View.GONE);
-        desertPlaceholder.setVisibility(View.VISIBLE);
-        desertPlaceholder.setOnButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // do stuff
-                searchClicked();
-            }
-        });
+        mSessionManager = new SessionManager(this);
+        progressDialog = new ProgressDialog(ResultActivity.this);
+
+        if(mSessionManager.isLoggedIn()){
+            HashMap<String, String> map = mSessionManager.getUserDetails();
+            String value = map.get(SessionManager.KEY_RESULT);
+            fillData(value);
+        }
 
         searchClicked();
     }
@@ -142,49 +139,13 @@ public class ResultActivity extends AppCompatActivity {
         String  REQUEST_TAG = "com.example.tobibur.moviefinderomdb";
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        // Instantiate the RequestQueue.
-        mImageLoader = AppSingleton.getInstance(this.getApplicationContext())
-                .getImageLoader();
+
         StringRequest strReq = new StringRequest(url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, response);
-                try {
-                    mRelativeLayout.setVisibility(View.VISIBLE);
-                    desertPlaceholder.setVisibility(View.GONE);
-                    
-                    JSONObject jsonObject = new JSONObject(response);
-                    String img_url = jsonObject.getString("Poster");
-                    String title = jsonObject.getString("Title");
-                    String year = jsonObject.getString("Year");
-                    String rating = jsonObject.getString("imdbRating");
-                    String released = jsonObject.getString("Released");
-                    String runtime = jsonObject.getString("Runtime");
-                    String genre = jsonObject.getString("Genre");
-                    String actor = jsonObject.getString("Actors");
-                    String plot = jsonObject.getString("Plot");
-                    
-                    mImageLoader.get(img_url,
-                            ImageLoader.getImageListener(mNetworkImageView,
-                                    R.mipmap.ic_launcher,
-                                    R.mipmap.ic_launcher));
-                    mNetworkImageView.setImageUrl(img_url, mImageLoader);
-                    String titleYear=title+" ("+year+")";
-                    String rated =getString(R.string.imdb)+" "+rating;
-                    title_view.setText(titleYear);
-                    rate_view.setText(rated);
-                    release_view.setText("Released: "+released);
-                    run_view.setText("Runtime: "+runtime);
-                    genre_view.setText("Genre: "+genre);
-                    actor_view.setText("Actors: "+actor);
-                    plot_view.setText("Plot: "+plot);
-
-                } catch (JSONException e) {
-                    mRelativeLayout.setVisibility(View.GONE);
-                    desertPlaceholder.setVisibility(View.VISIBLE);
-                    Toast.makeText(ResultActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onResponse: JsonException triggered");
-                }
+                mSessionManager.createMovieSession(response);
+                fillData(response);
 
                 progressDialog.hide();
             }
@@ -198,6 +159,38 @@ public class ResultActivity extends AppCompatActivity {
         });
         // Adding String request to request queue
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(strReq, REQUEST_TAG);
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void fillData(String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            String img_url = jsonObject.getString("Poster");
+            String title = jsonObject.getString("Title");
+            String year = jsonObject.getString("Year");
+            String rating = jsonObject.getString("imdbRating");
+            String released = jsonObject.getString("Released");
+            String runtime = jsonObject.getString("Runtime");
+            String genre = jsonObject.getString("Genre");
+            String actor = jsonObject.getString("Actors");
+            String plot = jsonObject.getString("Plot");
+
+            Glide.with(this).load(img_url).into(mNetworkImageView);
+
+            String titleYear=title+" ("+year+")";
+            String rated =getString(R.string.imdb)+" "+rating;
+            title_view.setText(titleYear);
+            rate_view.setText(rated);
+            release_view.setText("Released: "+released);
+            run_view.setText("Runtime: "+runtime);
+            genre_view.setText("Genre: "+genre);
+            actor_view.setText("Actors: "+actor);
+            plot_view.setText("Plot: "+plot);
+
+        } catch (JSONException e) {
+            Toast.makeText(ResultActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "onResponse: JsonException triggered");
+        }
     }
 
     @Override
