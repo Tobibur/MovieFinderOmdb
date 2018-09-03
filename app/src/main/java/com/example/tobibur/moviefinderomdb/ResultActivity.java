@@ -2,16 +2,22 @@ package com.example.tobibur.moviefinderomdb;
 
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +42,7 @@ import static android.content.ContentValues.TAG;
 
 public class ResultActivity extends AppCompatActivity {
 
-    ProgressDialog progressDialog;
+    ContentLoadingProgressBar progressDialog;
 
     @BindView(R.id.networkImageView)
     ImageView mNetworkImageView;
@@ -61,15 +67,34 @@ public class ResultActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mSessionManager = new SessionManager(this);
-        progressDialog = new ProgressDialog(ResultActivity.this);
+        progressDialog = new ContentLoadingProgressBar(ResultActivity.this);
 
         if(mSessionManager.isLoggedIn()){
             HashMap<String, String> map = mSessionManager.getUserDetails();
             String value = map.get(SessionManager.KEY_RESULT);
             fillData(value);
+        }else {
+            customDialogCall();
         }
 
         searchClicked();
+    }
+
+    private void customDialogCall() {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.custom_dialog, null);
+        final EditText mEditText = alertLayout.findViewById(R.id.dMessage);
+        new AlertDialog.Builder(this)
+                .setTitle("Search Movie")
+                .setView(alertLayout)
+                .setCancelable(false)
+                .setNegativeButton("Search", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        BuildMovieUrl(mEditText.getText().toString());
+                    }
+                })
+                .setPositiveButton("Close", null)
+                .show();
     }
 
     private void searchClicked() {
@@ -137,7 +162,7 @@ public class ResultActivity extends AppCompatActivity {
     public void volleyStringRequest(String url){
 
         String  REQUEST_TAG = "com.example.tobibur.moviefinderomdb";
-        progressDialog.setMessage("Loading...");
+        //progressDialog.st("Loading...");
         progressDialog.show();
 
         StringRequest strReq = new StringRequest(url, new Response.Listener<String>() {
